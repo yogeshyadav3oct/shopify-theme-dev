@@ -1,0 +1,30 @@
+.newsletter__wrapper { max-width: 1200px; margin: 0 auto; }
+.newsletter-content h2 { font-size: 32px; color: #214850; margin-bottom: 4px !important; }
+.newsletter__subheading p { color: #214850; }
+.newsletter__wrapper .newsletter-form.form-elements { max-width: unset; width: 50%; }
+.newsletter-content { width: 50%; padding-right: 20px; }
+.newsletter-form.form-elements .newsletter-form-container { width: 100%; }
+.newsletter-form-container .newsletter-form__field-wrapper { width: 100%; max-width: unset !important; background-color: #C7AA82 !important; padding: 6px; border-radius: 50px; }
+.newsletter-form__field-wrapper .field .field__input { background-color: transparent; box-shadow: none !important; outline: none; color: #ffff !important; height: 58px; padding: 12px 27px !important; padding-right: 80px !important; }
+.newsletter-form__field-wrapper .field {    /* border: none !important; */ }
+.newsletter-form__field-wrapper .field::before, .newsletter-form__field-wrapper .field::after { border: none !important; box-shadow: none !important; }
+.newsletter-form__field-wrapper .field .field__label { color: #fff !important; font-size: 15px; left: 25px; display: none; }
+.newsletter-form__button { background-color: #214850 !important; color: #fff; border-radius: 50px; width: 60px !important; height: 60px !important; }
+.newsletter-form-container .newsletter-form { max-width: unset; }
+.newsletter-form__field-wrapper .field .field__input::placeholder { color: #fff !important; opacity: 1; font-size: 18px; }
+.newsletter__wrapper > * { margin-top: 0; margin-bottom: 0; }
+.newsletter__wrapper > * + * { margin-top: 2rem; }
+.newsletter__wrapper > * + .newsletter-form { margin-top: 3rem; }
+.newsletter__subheading { max-width: 70rem; margin-left: auto; margin-right: auto; }
+.newsletter__wrapper .newsletter-form__field-wrapper { max-width: 36rem; }
+.newsletter-form__field-wrapper .newsletter-form__message { margin-top: 1.5rem; }
+.newsletter__button { margin-top: 3rem; width: fit-content; }
+@media screen and (min-width:750px) {
+    .newsletter__button { flex-shrink: 0; margin: 0 0 0 1rem; }
+}
+
+@media screen and (max-width:767.98px) {
+.newsletter-content { width: 100%; margin-bottom: 20px; text-align: center;}
+.newsletter__wrapper { flex-flow: column;}
+.newsletter__wrapper .newsletter-form.form-elements { width: 80%;}
+}

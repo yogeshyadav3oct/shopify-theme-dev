@@ -1,0 +1,129 @@
+{{ 'shop-by-category.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+<div class="shop-by-category color-{{ section.settings.color_scheme }} section-{{ section.id }}-padding">
+  <div class="page-width">
+    <div class="shop-by-category-contents">
+      <h2 class="center">{{ section.settings.title }}</h2>
+      <h3 class="center">{{ section.settings.sub_heading }}</h3>
+      <div class="shop-by-category-contents__list category-slider">
+        {%- for block in section.blocks -%}
+          {%- assign add_category = block.settings.add_category -%}
+          <a href="{{ add_category.url }}" class="shop-by-category-contents__list-item">
+            {%- assign icon = block.settings.icon -%}
+            {% if icon != blank %}
+              <div class="category-icon">
+                {{ icon | image_url: width: icon.width | image_tag: class: 'cat-icon', loading: 'lazy' }}
+              </div>
+            {% endif %}
+            {% if section.settings.title != blank %}
+              <h2>{{ block.settings.title }}</h2>
+            {% else %}
+              <h2>{{ add_category.title }}</h2>
+            {% endif %}
+            <p>{{ block.settings.text }}</p>
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+  {
+  "name": "Shop by Category",
+  "max_blocks": 16,
+  "tag": "section",
+    "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+     {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "background-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 52
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "sub_heading",
+      "label": "Sub Heading"
+    }
+  ],
+  "blocks": [
+    {
+      "name": "Add Category",
+      "type": "category_block",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "icon",
+          "label": "Icon"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Titlte",
+          "info": "Leave blank if you want to show, selected category title"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "text",
+          "label": "Text"
+        },
+         {
+          "type": "collection",
+          "id": "add_category",
+          "label": "Add Category"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Shop by Category"
+    }
+  ]
+}
+{% endschema %}

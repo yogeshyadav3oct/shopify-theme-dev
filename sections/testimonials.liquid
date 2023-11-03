@@ -1,0 +1,293 @@
+{{ 'testimonials.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+<div
+  class="testimonials testimonials_container  color-{{ section.settings.color_scheme }} section-{{ section.id }}-padding"
+>
+  <div class="page-width">
+    <div class="rotating-slider">
+      <ul class="slides">
+        {%- for block in section.blocks -%}
+          <li class="testimonials__list-item">
+            <div class="testimonials__list-box">
+              <h2>{{ block.settings.title }}</h2>
+              <p>{{ block.settings.text }}</p>
+              {%- assign icon = block.settings.icon -%}
+              {% if icon != blank %}
+                <div class="testimonials-icon">
+                  {{ icon | image_url: width: icon.width | image_tag: class: 'cat-icon', loading: 'lazy' }}
+                </div>
+              {% endif %}
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+      {%- assign carton_image = section.settings.carton_image -%}
+      {% if carton_image != blank %}
+        <div class="testimonials-icon-bottom">
+          {{ carton_image | image_url: width: icon.width | image_tag: class: 'cat-icon', loading: 'lazy' }}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<script>
+    (function($) {
+      $.fn.rotatingSlider = function(options) {
+          var rotatingSlider = {
+              init: function(el) {
+                  this.$slider = $(el);
+                  this.$slidesContainer = this.$slider.children('ul.slides');
+                  this.$slides = this.$slidesContainer.children('li');
+                  this.$clipPath;
+                  this.$directionControls;
+                  this.settings = $.extend({
+                      autoRotate: !0,
+                      autoRotateInterval: 6000,
+                      draggable: !0,
+                      directionControls: !0,
+                      directionLeftText: '<svg class="category-arrow-prev" width="60" height="60" viewBox="0 0 68 68" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="34" cy="34" r="34" transform="matrix(-1 0 0 1 68 0)" fill="#fff"/><path d="M21.4697 34.5303C21.1768 34.2374 21.1768 33.7626 21.4697 33.4697L26.2426 28.6967C26.5355 28.4038 27.0104 28.4038 27.3033 28.6967C27.5962 28.9896 27.5962 29.4645 27.3033 29.7574L23.0607 34L27.3033 38.2426C27.5962 38.5355 27.5962 39.0104 27.3033 39.3033C27.0104 39.5962 26.5355 39.5962 26.2426 39.3033L21.4697 34.5303ZM46 34.75H22V33.25H46V34.75Z" fill="#8E7555"/></svg>',
+                      directionRightText: '<svg class="category-arrow-next" width="60" height="60" viewBox="0 0 68 68" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="34" cy="34" r="34" fill="#fff"/><path d="M46.5303 34.5303C46.8232 34.2374 46.8232 33.7626 46.5303 33.4697L41.7574 28.6967C41.4645 28.4038 40.9896 28.4038 40.6967 28.6967C40.4038 28.9896 40.4038 29.4645 40.6967 29.7574L44.9393 34L40.6967 38.2426C40.4038 38.5355 40.4038 39.0104 40.6967 39.3033C40.9896 39.5962 41.4645 39.5962 41.7574 39.3033L46.5303 34.5303ZM22 34.75H46V33.25H22V34.75Z" fill="#8E7555"/></svg>',
+                      rotationSpeed: 750,
+                      slideHeight: 360,
+                      slideWidth: 480,
+                  }, options);
+                  this.slideAngle = 360 / this.$slides.length;
+                  this.currentRotationAngle = 0;
+                  this.autoRotateIntervalId = !1;
+                  this.rotateTimoutId = !1;
+                  this.currentlyRotating = !1;
+                  this.readyToDrag = !1;
+                  this.dragStartPoint;
+                  this.dragStartAngle;
+                  this.currentlyDragging = !1;
+                  this.markupIsValid = !1;
+                  this.validateMarkup();
+                  if (this.markupIsValid) {
+                      this.renderSlider();
+                      this.bindEvents();
+                      if (this.settings.autoRotate) {
+                          this.startAutoRotate()
+                      }
+                  }
+              },
+              bindEvents: function() {
+                  if (this.settings.draggable) {
+                      this.$slidesContainer.on('mousedown touchstart', this.handleDragStart.bind(this));
+                      this.$slidesContainer.on('mousemove touchmove', this.handleDragMove.bind(this));
+                      this.$slidesContainer.on('mouseup mouseleave touchend', this.handleDragEnd.bind(this))
+                  }
+                  if (this.settings.directionControls) {
+                      this.$slider.find('ul.direction-controls .left-arrow button').click(this.handleLeftDirectionClick.bind(this));
+                      this.$slider.find('ul.direction-controls .right-arrow button').click(this.handleRightDirectionClick.bind(this))
+                  }
+              },
+              handleDragStart: function(e) {
+                  this.readyToDrag = !0;
+                  this.dragStartPoint = (e.type === 'mousedown') ? e.pageX : e.originalEvent.touches[0].pageX
+              },
+              handleDragMove: function(e) {
+                  if (this.readyToDrag) {
+                      var pageX = (e.type === 'mousemove') ? e.pageX : e.originalEvent.touches[0].pageX;
+                      if (this.currentlyDragging === !1 && this.currentlyRotating === !1 && (this.dragStartPoint - pageX > 10 || this.dragStartPoint - pageX < -10)) {
+                          this.stopAutoRotate();
+                          if (this.settings.directionControls) {
+                              this.$directionControls.css('pointer-events', 'none')
+                          }
+                          window.getSelection().removeAllRanges();
+                          this.currentlyDragging = !0;
+                          this.dragStartAngle = this.currentRotationAngle
+                      }
+                      if (this.currentlyDragging) {
+                          this.currentRotationAngle = this.dragStartAngle - ((this.dragStartPoint - pageX) / this.settings.slideWidth * this.slideAngle);
+                          this.$slidesContainer.css('transform', 'translateX(-50%) rotate(' + this.currentRotationAngle + 'deg)')
+                      }
+                  }
+              },
+              handleDragEnd: function(e) {
+                  this.readyToDrag = !1;
+                  if (this.currentlyDragging) {
+                      this.currentlyDragging = !1;
+                      this.currentRotationAngle = Math.round(this.currentRotationAngle / this.slideAngle) * this.slideAngle;
+                      this.rotate();
+                      if (this.settings.directionControls) {
+                          this.$directionControls.css('pointer-events', '')
+                      }
+                  }
+              },
+              handleLeftDirectionClick: function(e) {
+                  e.preventDefault();
+                  this.stopAutoRotate();
+                  this.rotateClockwise()
+              },
+              handleRightDirectionClick: function(e) {
+                  e.preventDefault();
+                  this.stopAutoRotate();
+                  this.rotateCounterClockwise()
+              },
+              renderSlider: function() {
+                  var halfAngleRadian = this.slideAngle / 2 * Math.PI / 180;
+                  var innerRadius = 1 / Math.tan(halfAngleRadian) * this.settings.slideWidth / 2;
+                  var outerRadius = Math.sqrt(Math.pow(innerRadius + this.settings.slideHeight, 2) + (Math.pow((this.settings.slideWidth / 2), 2)));
+                  upperArcHeight = outerRadius - (innerRadius + this.settings.slideHeight);
+                  lowerArcHeight = innerRadius - (innerRadius * (Math.cos(halfAngleRadian)));
+                  var slideFullWidth = (Math.sin(halfAngleRadian) * outerRadius) * 2;
+                  var slideFullHeight = upperArcHeight + this.settings.slideHeight + lowerArcHeight
+                  var slideSidePadding = (slideFullWidth - this.settings.slideWidth) / 2;
+                  var fullArcHeight = outerRadius - (outerRadius * (Math.cos(halfAngleRadian)));
+                  var lowerArcOffset = (slideFullWidth - (Math.sin(halfAngleRadian) * innerRadius * 2)) / 2;
+                  this.$slider.css('height', this.settings.slideHeight + 'px');
+                  this.$slider.css('width', this.settings.slideWidth + 'px');
+                  this.$slidesContainer.css('height', outerRadius * 2 + 'px');
+                  this.$slidesContainer.css('width', outerRadius * 2 + 'px');
+                  this.$slidesContainer.css('transform', 'translateX(-50%)');
+                  this.$slidesContainer.css('top', '-' + upperArcHeight + 'px');
+                  var pathCoords = 'M 0 ' + fullArcHeight;
+                  pathCoords += ' A ' + outerRadius + ' ' + outerRadius + ' 0 0 1 ' + slideFullWidth + ' ' + fullArcHeight;
+                  pathCoords += ' L ' + (slideFullWidth - lowerArcOffset) + ' ' + slideFullHeight;
+                  pathCoords += ' A ' + innerRadius + ' ' + innerRadius + ' 0 0 0 ' + lowerArcOffset + ' ' + slideFullHeight + ' Z';
+                  this.$slider.append('<svg><defs><clipPath id="slideClipPath"><path /></clipPath></defs></svg>');
+                  this.$slider.find('#slideClipPath>path').attr('d', pathCoords);
+                  this.$slides.each(function(i, el) {
+                      var $slide = $(el);
+                      $slide.css('transform-origin', 'center ' + (innerRadius + this.settings.slideHeight) + 'px');
+                      $slide.css('height', this.settings.slideHeight + 'px');
+                      $slide.css('width', this.settings.slideWidth + 'px');
+                      $slide.css('padding', upperArcHeight + 'px ' + slideSidePadding + 'px ' + lowerArcHeight + 'px ' + slideSidePadding + 'px ');
+                      $slide.css('top', upperArcHeight + 'px');
+                      $slide.css('transform', 'translateX(-50%) rotate(' + this.slideAngle * i + 'deg) translateY(-' + upperArcHeight + 'px)');
+                      $slide.css('-webkit-clip-path', 'url(#slideClipPath)');
+                      $slide.css('clip-path', 'url(#slideClipPath)')
+                  }.bind(this));
+                  if (this.settings.directionControls) {
+                      var directionArrowsHTML = '<ul class="direction-controls">';
+                      directionArrowsHTML += '<li class="left-arrow"><button>' + this.settings.directionLeftText + '</button></li>';
+                      directionArrowsHTML += '<li class="right-arrow"><button>' + this.settings.directionRightText + '</button></li>';
+                      directionArrowsHTML += '</ul>';
+                      this.$slider.append(directionArrowsHTML);
+                      this.$directionControls = this.$slider.find('ul.direction-controls')
+                  }
+              },
+              rotateClockwise: function() {
+                  this.currentRotationAngle = this.currentRotationAngle + this.slideAngle;
+                  this.rotate()
+              },
+              rotateCounterClockwise: function() {
+                  this.currentRotationAngle = this.currentRotationAngle - this.slideAngle;
+                  this.rotate()
+              },
+              rotate: function() {
+                  this.currentlyRotating = !0;
+                  if (this.rotateTimeoutId) {
+                      clearTimeout(this.rotateTimeoutId);
+                      this.rotateTimeoutId = !1
+                  }
+                  this.$slidesContainer.css('transition', 'transform ' + (this.settings.rotationSpeed / 1000) + 's ease-in-out');
+                  this.$slidesContainer.css('transform', 'translateX(-50%) rotate(' + this.currentRotationAngle + 'deg)');
+                  this.rotateTimeoutId = setTimeout(function() {
+                      this.currentlyRotating = !1;
+                      this.$slidesContainer.css('transition', 'none');
+                      if (this.currentRotationAngle >= 360 || this.currentRotationAngle <= -360) {
+                          this.currentRotationAngle = this.currentRotationAngle >= 360 ? this.currentRotationAngle - 360 : this.currentRotationAngle + 360;
+                          this.$slidesContainer.css('transform', 'translateX(-50%) rotate(' + this.currentRotationAngle + 'deg)')
+                      }
+                  }.bind(this), this.settings.rotationSpeed)
+              },
+              startAutoRotate: function() {
+                  this.autoRotateIntervalId = setInterval(function() {
+                      this.rotateCounterClockwise()
+                  }.bind(this), this.settings.autoRotateInterval)
+              },
+              stopAutoRotate: function() {
+                  if (this.autoRotateIntervalId) {
+                      clearInterval(this.autoRotateIntervalId);
+                      this.autoRotateIntervalId = !1
+                  }
+              },
+              validateMarkup: function() {
+                  if (this.$slider.hasClass('rotating-slider') && this.$slidesContainer.length === 1 && this.$slides.length >= 2) {
+                      this.markupIsValid = !0
+                  } else {
+                      this.$slider.css('display', 'none');
+                      console.log('Markup for Rotating Slider is invalid.')
+                  }
+              }
+          }
+          return this.each(function() {
+              rotatingSlider.init(this)
+          })
+      }
+  }(jQuery))
+</script>
+<script>
+  $(function(){
+      $('.rotating-slider').rotatingSlider({
+    		slideHeight : Math.min(360, window.innerWidth -80),
+    		slideWidth : Math.min(480, window.innerWidth - 80),
+    	});
+  });
+</script>
+
+{% schema %}
+  {
+  "name": "Testimonials",
+  "tag": "section",
+  "class":"testimonials-section",
+    "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "bg_image",
+      "label": "BG Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "carton_image",
+      "label": "Carton Image"
+    }
+  ],
+  "blocks": [
+    {
+      "name": "Testimonial Block",
+      "type": "testimonial_block",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "text",
+          "label": "Text"
+        },
+        {
+          "type": "image_picker",
+          "id": "icon",
+          "label": "Icon"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Testimonials"
+    }
+  ]
+}
+{% endschema %}

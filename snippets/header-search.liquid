@@ -1,0 +1,95 @@
+{% comment %}
+  Renders a header search modal. Should be used with 'header.liquid'
+
+  Accepts:
+  - input_id: {String} Id for the search input element (required)
+
+  Usage:
+  {% render 'header-search', input_id: 'My-Id'%}
+{% endcomment %}
+
+<details-modal class="header__search">
+  <details>
+    <summary class="header__icon header__icon--search header__icon--summary link focus-inset modal__toggle" aria-haspopup="dialog" aria-label="{{ 'general.search.search' | t }}">
+      <span>
+       
+        <svg class="modal__toggle-open icon icon-search" aria-hidden="true" focusable="false" width="35" height="35" viewBox="0 0 35 35" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g id="ep:search">
+        <path id="Vector" d="M27.2037 25.6593L31.4759 29.9293C31.6752 30.1356 31.7854 30.4119 31.7829 30.6987C31.7804 30.9854 31.6654 31.2598 31.4626 31.4625C31.2598 31.6653 30.9855 31.7804 30.6987 31.7829C30.4119 31.7854 30.1357 31.6751 29.9294 31.4759L25.6572 27.2037C22.8654 29.5956 19.2557 30.8132 15.5855 30.6011C11.9153 30.3889 8.46999 28.7635 5.97242 26.0658C3.47484 23.3682 2.1192 19.808 2.18995 16.1324C2.26071 12.4567 3.75235 8.95138 6.3519 6.35183C8.95144 3.75229 12.4568 2.26065 16.1324 2.18989C19.808 2.11914 23.3682 3.47478 26.0659 5.97236C28.7635 8.46993 30.389 11.9153 30.6011 15.5855C30.8133 19.2556 29.5957 22.8653 27.2037 25.6571V25.6593ZM16.4062 28.4374C19.5971 28.4374 22.6573 27.1699 24.9136 24.9136C27.1699 22.6573 28.4375 19.5971 28.4375 16.4062C28.4375 13.2153 27.1699 10.1551 24.9136 7.89881C22.6573 5.64251 19.5971 4.37493 16.4062 4.37493C13.2154 4.37493 10.1552 5.64251 7.89887 7.89881C5.64257 10.1551 4.37499 13.2153 4.37499 16.4062C4.37499 19.5971 5.64257 22.6573 7.89887 24.9136C10.1552 27.1699 13.2154 28.4374 16.4062 28.4374Z" fill="#C7AA82"/>
+        </g>
+        </svg>
+
+        <svg class="modal__toggle-close icon icon-close" aria-hidden="true" focusable="false">
+          <use href="#icon-close">
+        </svg>
+      </span>
+    </summary>
+    <div class="search-modal modal__content gradient" role="dialog" aria-modal="true" aria-label="{{ 'general.search.search' | t }}">
+      <div class="modal-overlay"></div>
+      <div class="search-modal__content{% if settings.inputs_shadow_vertical_offset != 0 and settings.inputs_shadow_vertical_offset < 0 %} search-modal__content-top{% else %} search-modal__content-bottom{% endif %}" tabindex="-1">
+        {%- if settings.predictive_search_enabled -%}
+          <predictive-search class="search-modal__form" data-loading-text="{{ 'accessibility.loading' | t }}">
+        {%- else -%}
+          <search-form class="search-modal__form">
+        {%- endif -%}
+            <form action="{{ routes.search_url }}" method="get" role="search" class="search search-modal__form">
+              <div class="field">
+                <input class="search__input field__input"
+                  id="{{ input_id }}"
+                  type="search"
+                  name="q"
+                  value="{{ search.terms | escape }}"
+                  placeholder="{{ 'general.search.search' | t }}"
+                  {%- if settings.predictive_search_enabled -%}
+                    role="combobox"
+                    aria-expanded="false"
+                    aria-owns="predictive-search-results"
+                    aria-controls="predictive-search-results"
+                    aria-haspopup="listbox"
+                    aria-autocomplete="list"
+                    autocorrect="off"
+                    autocomplete="off"
+                    autocapitalize="off"
+                    spellcheck="false"
+                  {%- endif -%}
+                >
+                <label class="field__label" for="{{ input_id }}">{{ 'general.search.search' | t }}</label>
+                <input type="hidden" name="options[prefix]" value="last">
+                <button type="reset" class="reset__button field__button{% if search.terms == blank %} hidden{% endif %}" aria-label="{{ 'general.search.reset' | t }}">
+                  <svg class="icon icon-close" aria-hidden="true" focusable="false">
+                    <use xlink:href="#icon-reset">
+                  </svg>
+                </button>
+                <button class="search__button field__button" aria-label="{{ 'general.search.search' | t }}">
+                  <svg class="icon icon-search" aria-hidden="true" focusable="false">
+                    <use href="#icon-search">
+                  </svg>
+                </button>
+              </div>
+
+              {%- if settings.predictive_search_enabled -%}
+                <div class="predictive-search predictive-search--header" tabindex="-1" data-predictive-search>
+                  <div class="predictive-search__loading-state">
+                    <svg aria-hidden="true" focusable="false" class="spinner" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+                      <circle class="path" fill="none" stroke-width="6" cx="33" cy="33" r="30"></circle>
+                    </svg>
+                  </div>
+                </div>
+
+                <span class="predictive-search-status visually-hidden" role="status" aria-hidden="true"></span>
+              {%- endif -%}
+            </form>
+          {%- if settings.predictive_search_enabled -%}
+            </predictive-search>
+          {%- else -%}
+            </search-form>
+          {%- endif -%}
+        <button type="button" class="search-modal__close-button modal__close-button link link--text focus-inset" aria-label="{{ 'accessibility.close' | t }}">
+          <svg class="icon icon-close" aria-hidden="true" focusable="false">
+            <use href="#icon-close">
+          </svg>
+        </button>
+      </div>
+    </div>
+  </details>
+</details-modal>

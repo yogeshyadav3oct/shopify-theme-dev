@@ -1,0 +1,23 @@
+.banner { position: relative; z-index: 9; padding-top: 90px; }
+.banner::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: calc(100% - 60px); background: linear-gradient(289deg, #F6EDD8, transparent); z-index: -1; }
+.banner::after { content: ""; content: ""; position: absolute; width: 100%; bottom: 60px; left: 0; height: 90px; background-image: url(/cdn/shop/files/shape-hero.png?v=1694880065); background-position: bottom center; z-index: -1; background-repeat-x: repeat; background-size: contain;    background-repeat-y: no-repeat; }
+.banner-contents-outer { display: flex; }
+.banner-contents { width: 60%; padding-top: 70px; }
+.banner-img { width: 40%; }
+.banner-img img { width: calc(100% + 300px); margin-left: -300px; margin-bottom: -100px; }
+.banner-contents h1 { font-size: 90px; line-height: 110%; margin-top: 0; color: #214850; letter-spacing: -4px; text-transform: uppercase; font-weight: 700; }
+.banner-cta a { border-radius: 42px; background: #FFF; padding: 20px 30px; font-size: 18px; text-decoration: none; color: #214850; text-transform: uppercase; transition: all .3s ease-in; }
+.banner-cta a svg { vertical-align: middle; margin-left: 10px; }
+.banner-cta a:hover { box-shadow: 6px 6px 20px rgba(0, 0, 0, 0.1); }
+@media (max-width:1399.98px) {
+    .banner-contents h1 { font-size: 70px; }
+    .banner-img img { width: calc(100% + 200px); margin-left: -200px; margin-top: -20px; }
+}
+
+
+@media (max-width:767.98px) {
+.banner-contents h1 { font-size: 40px;}
+.banner-contents { padding-top: 40px;}
+.banner:before { height: calc(100% - 20px);}
+.banner:after { bottom: 20px;}
+}
