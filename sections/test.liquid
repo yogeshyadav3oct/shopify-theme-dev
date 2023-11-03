@@ -1,0 +1,55 @@
+{%- ########################################################################## 
+# Label: Text 0
+# Returns: a string or an empty object(if nothing has been entered)
+# Filters: https://shopify.dev/api/liquid/objects#string 
+########################################################################## -%}
+{{ section.settings.text_0 }} 
+
+{%- ########################################################################## 
+# Label: Textarea 1
+# Returns: a string or an empty object(if nothing has been entered)
+# Filters: https://shopify.dev/api/liquid/objects#string 
+########################################################################## -%}
+{{ section.settings.textarea_1 }} 
+
+{%- ########################################################################## 
+# Label: Radio 2
+# Returns a string. i.e. the value of the selected option
+# Filters: https://shopify.dev/api/liquid/objects#string
+########################################################################## -%}
+{{ section.settings.radio_2 }} 
+
+{% schema %}
+  {
+  "name": "Testing",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "label": "Text 0",
+      "id": "text_0"
+    },
+    {
+      "type": "textarea",
+      "label": "Textarea 1",
+      "id": "textarea_1"
+    },
+    {
+      "type": "radio",
+      "label": "Radio 2",
+      "id": "radio_2"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Testing"
+    }
+  ]
+}  
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}
